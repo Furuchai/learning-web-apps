@@ -1,0 +1,101 @@
+/* =========================================
+   1. 全体設定 (リセットとベース)
+   ========================================= */
+/* すべての要素(*)に対する設定 */
+* {
+    /* パディングやボーダーを要素の「幅」に含める設定。
+       これがないと、サイズ計算が面倒になります */
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    /* Windows 11のシステムフォントに合わせるモダンな指定 */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f4f9; /* 背景は薄いグレーで目に優しく */
+    color: #333; /* 文字は真っ黒(black)より少しグレー寄りが読みやすい */
+    line-height: 1.6;
+    
+    /* 画面全体の中央にコンテンツを寄せる設定 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* 画面の高さ100%を使う */
+}
+
+/* =========================================
+   2. メインコンテナ (白いカード部分)
+   ========================================= */
+.container {
+    background: white;
+    width: 400px; /* 幅を固定 */
+    padding: 2rem; /* 内側の余白 (1rem = 約16px) */
+    border-radius: 10px; /* 角を丸くする */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 影をつけて浮き上がらせる */
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+}
+
+/* =========================================
+   3. 入力エリア (Flexboxの活用)
+   ========================================= */
+.input-area {
+    display: flex; /* 横並びにする魔法の呪文 */
+    gap: 10px; /* 入力欄とボタンの間隔 */
+    margin-bottom: 20px;
+}
+
+/* 入力欄 */
+#task-input {
+    flex-grow: 1; /* 余ったスペースを全て使う（横幅いっぱいに広がる） */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    outline: none; /* クリック時の青い枠線を消す */
+}
+
+#task-input:focus {
+    border-color: #3498db; /* 入力中は青枠にする */
+}
+
+/* 追加ボタン */
+#add-btn {
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer; /* マウスを乗せると指マークになる */
+    transition: background-color 0.3s; /* 色の変化をアニメーションさせる */
+}
+
+#add-btn:hover {
+    background-color: #2980b9; /* マウスを乗せた時の色（少し濃く） */
+}
+
+/* =========================================
+   4. タスクリスト
+   ========================================= */
+ul {
+    list-style: none; /* リストの「・」を消す */
+}
+
+/* JSで追加される <li> のスタイル（今の段階では画面に見えません） */
+li {
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between; /* 文字と削除ボタンを左右端に配置 */
+    align-items: center;
+}
+
+/* 最後の要素だけ下線を消すテクニック */
+li:last-child {
+    border-bottom: none;
+}
