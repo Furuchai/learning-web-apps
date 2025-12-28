@@ -5,64 +5,98 @@ const taskList  = document.getElementById('task-list');
 /* =========================================
    1. 画面の初期化 (読み込み処理)
    ========================================= */
-// ページが開かれた瞬間に実行されます
 document.addEventListener('DOMContentLoaded', showTask);
 
 function showTask() {
-    // LocalStorageから 'tasks' というキーでデータを取得
-    // Pythonの json.loads() に相当するのが JSON.parse() です
     const savedTasks = localStorage.getItem('tasks');
 
     if (savedTasks) {
-        // 保存されたJSON文字列を配列(リスト)に戻す
+        // ここで保存された「オブジェクトのリスト」を復元します
         const tasksArray = JSON.parse(savedTasks);
-        
-        // 保存されていたタスクの数だけループして表示
-        tasksArray.forEach(function(text) {
-            createListElement(text);
+
+        // 旧データ(ただの文字列配列)が残っている場合のエラー回避
+        // (学習中にデータ構造を変えたため、念の為のチェックです)
+        if (tasksArray.length > 0 && typeof tasksArray[0] === 'string') {
+            console.log("古いデータ形式を検知しました。一度クリアします。");
+            localStorage.removeItem('tasks');
+            return;
+        }
+
+        tasksArray.forEach(function(taskObj) {
+            // taskObj は { text: "...", date: "...", completed: true/false }
+            createListElement(taskObj);
         });
     }
 }
 
 /* =========================================
-   2. データ保存処理
+   2. データ保存処理 (オブジェクトとして保存)
    ========================================= */
 function saveData() {
     const tasks = [];
-    // 現在画面にあるすべての <li> の中の <span> (タスク文字) を探す
-    const spans = taskList.querySelectorAll('span');
+    const listItems = taskList.querySelectorAll('li');
 
-    // ループして文字だけを配列に格納
-    spans.forEach(function(span) {
-        tasks.push(span.textContent);
+    // 画面のリストを1つずつ見て、情報をオブジェクトにまとめ直す
+    listItems.forEach(function(li) {
+        const text = li.querySelector('.task-text').textContent;
+        const date = li.querySelector('.date-span').textContent;
+        // classList.contains は Pythonの "completed" in list と同じ
+        const isCompleted = li.querySelector('.task-text').classList.contains('completed');
+
+        // オブジェクト(辞書)を作成
+        const taskObj = {
+            text: text,
+            date: date,
+            completed: isCompleted
+        };
+
+        tasks.push(taskObj);
     });
 
-    // 配列をJSON文字列に変換してLocalStorageに保存
-    // Pythonの json.dumps() に相当するのが JSON.stringify() です
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
 /* =========================================
-   3. 共通: リスト要素を作る関数 (リファクタリング)
+   3. 共通: リスト要素を作る関数
    ========================================= */
-// 「タスク追加時」と「データ読み込み時」の両方で使うため、処理を切り出しました
-function createListElement(text) {
+// 引数 taskObj を受け取るように変更
+function createListElement(taskObj) {
     const li = document.createElement('li');
 
+    // 1. タスクの文字
     const span = document.createElement('span');
-    span.textContent = text;
+    span.textContent = taskObj.text;
+    span.classList.add('task-text'); // 識別用のクラス
     
+    // もし完了状態(true)なら、最初から線を引くクラスをつけておく
+    if (taskObj.completed) {
+        span.classList.add('completed');
+    }
+
+    // ★重要: 文字をクリックしたら完了/未完了を切り替える
+    span.addEventListener('click', function() {
+        // toggle: クラスがあれば消す、なければ付ける
+        span.classList.toggle('completed');
+        saveData(); // 状態が変わったので保存
+    });
+
+    // 2. 日付表示
+    const dateSpan = document.createElement('span');
+    dateSpan.textContent = taskObj.date;
+    dateSpan.classList.add('date-span');
+
+    // 3. 削除ボタン
     const deleteBtn = document.createElement('button');
     deleteBtn.textContent = '削除';
     deleteBtn.classList.add('delete-btn');
-
     deleteBtn.addEventListener('click', function() {
         li.remove();
-        // ★重要: 削除した後にも保存して、最新状態を維持する
         saveData();
     });
 
+    // 合体 (順番: 文字 -> 日付 -> ボタン)
     li.appendChild(span);
+    li.appendChild(dateSpan);
     li.appendChild(deleteBtn);
     taskList.appendChild(li);
 }
@@ -78,20 +112,29 @@ function addTask() {
         return;
     }
 
-    // 画面への要素追加は専用関数にお任せ
-    createListElement(taskText);
+    // 現在時刻を取得してフォーマット (例: 2023/12/28 18:30)
+    const now = new Date();
+    const dateString = now.toLocaleString('ja-JP', {
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric'
+    });
 
-    // ★重要: 追加した後すぐに保存する
+    // 新しいタスクのオブジェクトを作成
+    const newTaskObj = {
+        text: taskText,
+        date: dateString,
+        completed: false // 最初は未完了
+    };
+
+    createListElement(newTaskObj);
     saveData();
-
     taskInput.value = '';
 }
 
 // イベントリスナー
 addBtn.addEventListener('click', addTask);
-
 taskInput.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-        addTask();
-    }
+    if (event.key === 'Enter') addTask();
 });

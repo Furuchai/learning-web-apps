@@ -115,3 +115,23 @@ li:last-child {
 .delete-btn:hover {
     background-color: #c0392b; /* ホバー時は少し濃い赤に */
 }
+
+/* 完了したタスク（取り消し線と色を薄くする） */
+.completed {
+    text-decoration: line-through;
+    color: #888;
+    opacity: 0.7;
+}
+
+/* 日付のスタイル */
+.date-span {
+    font-size: 0.75rem; /* 文字を小さく */
+    color: #aaa;
+    margin-left: 10px; /* タスク文字との間隔 */
+}
+
+/* タスクの文字部分（クリックできることを示す） */
+li > span {
+    cursor: pointer;
+    flex-grow: 1; /* 余白を埋めて、クリック判定を広げる */
+}
