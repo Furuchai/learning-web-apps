@@ -4,7 +4,7 @@ Webアプリケーション開発の学習記録用リポジトリです。
 作成したアプリは GitHub Pages で公開しています。
 
 ## 🚀 デモサイト (Live Demo)
-**[👉 アプリを実際に動かす (ポートフォリオサイトへ)](https://[あなたのユーザー名].github.io/learning-web-apps/)**
+**[👉 アプリを実際に動かす (ポートフォリオサイトへ)](https://furuchai.github.io/learning-web-apps/)**
 
 ---
 
