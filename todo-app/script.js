@@ -1,14 +1,74 @@
-/* =========================================
-   1. HTMLの要素を取得する (Pythonの変数定義に近い)
-   ========================================= */
-// document.getElementById('ID名')
-// → HTMLの中から特定のIDを持つ要素を探して、変数に入れます。
-const taskInput = document.getElementById('task-input'); // 入力欄
-const addBtn    = document.getElementById('add-btn');    // 追加ボタン
-const taskList  = document.getElementById('task-list');  // リストの親要素(<ul>)
+const taskInput = document.getElementById('task-input');
+const addBtn    = document.getElementById('add-btn');
+const taskList  = document.getElementById('task-list');
 
 /* =========================================
-   2. 関数を定義する (Pythonの def に相当)
+   1. 画面の初期化 (読み込み処理)
+   ========================================= */
+// ページが開かれた瞬間に実行されます
+document.addEventListener('DOMContentLoaded', showTask);
+
+function showTask() {
+    // LocalStorageから 'tasks' というキーでデータを取得
+    // Pythonの json.loads() に相当するのが JSON.parse() です
+    const savedTasks = localStorage.getItem('tasks');
+
+    if (savedTasks) {
+        // 保存されたJSON文字列を配列(リスト)に戻す
+        const tasksArray = JSON.parse(savedTasks);
+        
+        // 保存されていたタスクの数だけループして表示
+        tasksArray.forEach(function(text) {
+            createListElement(text);
+        });
+    }
+}
+
+/* =========================================
+   2. データ保存処理
+   ========================================= */
+function saveData() {
+    const tasks = [];
+    // 現在画面にあるすべての <li> の中の <span> (タスク文字) を探す
+    const spans = taskList.querySelectorAll('span');
+
+    // ループして文字だけを配列に格納
+    spans.forEach(function(span) {
+        tasks.push(span.textContent);
+    });
+
+    // 配列をJSON文字列に変換してLocalStorageに保存
+    // Pythonの json.dumps() に相当するのが JSON.stringify() です
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+/* =========================================
+   3. 共通: リスト要素を作る関数 (リファクタリング)
+   ========================================= */
+// 「タスク追加時」と「データ読み込み時」の両方で使うため、処理を切り出しました
+function createListElement(text) {
+    const li = document.createElement('li');
+
+    const span = document.createElement('span');
+    span.textContent = text;
+    
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = '削除';
+    deleteBtn.classList.add('delete-btn');
+
+    deleteBtn.addEventListener('click', function() {
+        li.remove();
+        // ★重要: 削除した後にも保存して、最新状態を維持する
+        saveData();
+    });
+
+    li.appendChild(span);
+    li.appendChild(deleteBtn);
+    taskList.appendChild(li);
+}
+
+/* =========================================
+   4. ユーザー操作 (入力・追加)
    ========================================= */
 function addTask() {
     const taskText = taskInput.value;
@@ -18,49 +78,19 @@ function addTask() {
         return;
     }
 
-    // 1. liタグ（外枠）を作成
-    const li = document.createElement('li');
+    // 画面への要素追加は専用関数にお任せ
+    createListElement(taskText);
 
-    // 2. タスクの文字を入れる spanタグ を作成
-    // (直接 li.textContent に文字を入れると、後でボタンを入れた時に管理しにくくなるため)
-    const span = document.createElement('span');
-    span.textContent = taskText;
-    
-    // 3. 削除ボタンを作成
-    const deleteBtn = document.createElement('button');
-    deleteBtn.textContent = '削除';
-    deleteBtn.classList.add('delete-btn'); // CSSでデザインするためのクラス
-
-    // ★ここがポイント：削除ボタンに「クリックされたら親(li)を消す」機能をつける
-    deleteBtn.addEventListener('click', function() {
-        // Pythonでいう "del list[i]" や "list.remove(item)"
-        // このボタン(deleteBtn)が所属している親要素(li)ごと削除します
-        li.remove();
-    });
-
-    // 4. liの中に、spanとボタンを入れる（合体）
-    li.appendChild(span);
-    li.appendChild(deleteBtn);
-
-    // 5. リスト全体(ul)に、完成したliを追加
-    taskList.appendChild(li);
+    // ★重要: 追加した後すぐに保存する
+    saveData();
 
     taskInput.value = '';
 }
 
-/* =========================================
-   3. イベントリスナーを設定する
-   ========================================= */
-// ボタンが 'click' されたら、addTask関数を実行する
-// 注意: addTask() ではなく addTask と書きます（()をつけると即実行されてしまうため）
+// イベントリスナー
 addBtn.addEventListener('click', addTask);
 
-/* =========================================
-   4. Enterキーでの追加機能
-   ========================================= */
-// 入力欄でキーボードが押されたタイミングを監視します
 taskInput.addEventListener('keydown', function(event) {
-    // 押されたキーが 'Enter' かどうかをチェック
     if (event.key === 'Enter') {
         addTask();
     }
