@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Web Apps Portfolio</title>
     <style>
+        /* ポートフォリオページ専用の簡易スタイル */
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
             background-color: #f0f2f5;
             color: #333;
             line-height: 1.6;
             padding: 20px;
+            margin: 0;
         }
         .container {
             max-width: 800px;
@@ -23,62 +25,108 @@
         h1 {
             text-align: center;
             color: #2c3e50;
+            margin-bottom: 10px;
         }
+        .intro {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #666;
+        }
+        
+        /* プロジェクトカードのデザイン */
         .project-card {
             border-top: 1px solid #eee;
-            padding-top: 20px;
-            margin-top: 20px;
+            padding-top: 30px;
+            margin-top: 30px;
         }
         .project-title {
             font-size: 1.5rem;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             color: #3498db;
+            border-left: 5px solid #3498db;
+            padding-left: 10px;
         }
         .project-description {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         .screenshot {
             width: 100%;
-            max-width: 500px;
+            max-width: 600px; /* 画像が大きくなりすぎないように制限 */
             height: auto;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             display: block;
             margin: 0 auto 20px; /* 中央寄せ */
+            border: 1px solid #ddd;
         }
+        
+        /* 起動ボタンのデザイン */
         .launch-btn {
-            display: inline-block;
-            padding: 10px 20px;
+            display: block; /* スマホで押しやすいようにブロック要素に */
+            width: fit-content;
+            margin: 0 auto; /* 中央寄せ */
+            padding: 12px 30px;
             background-color: #3498db;
             color: white;
             text-decoration: none;
             border-radius: 5px;
+            font-weight: bold;
             transition: background-color 0.3s;
+            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.3);
         }
         .launch-btn:hover {
             background-color: #2980b9;
+            transform: translateY(-2px); /* ホバー時に少し浮く */
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>My Web Apps Portfolio</h1>
-        <p>学習中に作成したWebアプリケーションのポートフォリオです。</p>
+        <p class="intro">学習中に作成したWebアプリケーションのポートフォリオです。<br>以下のボタンから各アプリを実際に起動できます。</p>
 
         <div class="project-card">
             <h2 class="project-title">📝 ローカル保存型タスク管理アプリ</h2>
             
             <img src="images/todo-app-screenshot.png" alt="ToDoアプリの動作画面" class="screenshot">
 
-            <p class="project-description">
-                HTML/CSS/JavaScript(ES6)で作成した、モダンなデザインのTo-Doリストアプリです。<br>
-                タスクの追加・削除、完了状態の切り替え（取り消し線）、追加日時の自動記録に対応しています。<br>
-                ブラウザのLocalStorage機能を使用しているため、<strong>ページを閉じたりリロードしてもデータが消えません。</strong>
-            </p>
+            <div class="project-description">
+                <p>
+                    HTML/CSS/JavaScript(ES6)で作成した、モダンなデザインのTo-Doリストアプリです。<br>
+                    ブラウザのLocalStorage機能を使用しているため、<strong>ページを閉じたりリロードしてもデータが消えません。</strong>
+                </p>
+                <ul>
+                    <li>タスクの追加・削除機能</li>
+                    <li>完了状態の切り替え（取り消し線）</li>
+                    <li>追加日時の自動記録</li>
+                    <li>レスポンシブデザイン（スマホ対応）</li>
+                </ul>
+            </div>
 
-            <a href="./todo-app/" class="launch-btn" target="_blank">アプリを起動する ▶</a>
+            <a href="./todo-app/" class="launch-btn" target="_blank">ToDoアプリを起動する ▶</a>
         </div>
 
+        <div class="project-card">
+            <h2 class="project-title">🌍 多機能・天気予報アプリ</h2>
+            
+            <img src="images/weather-app-screenshot.png" alt="天気アプリの動作画面" class="screenshot">
+
+            <div class="project-description">
+                <p>
+                    Open-Meteo APIと連携し、リアルタイムな気象情報を取得するアプリケーションです。<br>
+                    非同期処理（Async/Await）を活用し、スムーズな操作性を実現しました。
+                </p>
+                <ul>
+                    <li><strong>現在地取得 (GPS):</strong> ワンタップで今いる場所の天気を表示</li>
+                    <li><strong>世界都市検索:</strong> ジオコーディングAPIにより、詳細な住所や海外都市も検索可能</li>
+                    <li><strong>詳細予報:</strong> 現在の天気、24時間予報(降水確率付)、14日間予報</li>
+                    <li><strong>UI設計:</strong> 横スクロールやグリッドレイアウトを活用した見やすいデザイン</li>
+                </ul>
+            </div>
+
+            <a href="./weather-app/" class="launch-btn" target="_blank">天気アプリを起動する ▶</a>
         </div>
+
+    </div>
 </body>
 </html>
