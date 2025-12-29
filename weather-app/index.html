@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高機能・天気予報アプリ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+
+        <div class="search-box">
+            <input type="text" id="city-input" placeholder="都市名を入力 (例: 大阪, London)">
+            <button id="search-btn">検索</button>
+            <button id="current-loc-btn" title="現在地から検索">📍</button>
+        </div>
+        <h1 id="city-name">東京の天気</h1>
+        
+        <button id="get-weather-btn">情報を更新</button>
+        
+        <div id="current-weather" class="card">
+            <div class="loading">ボタンを押して天気を取得してください</div>
+        </div>
+
+        <h2>今後24時間の天気</h2>
+        <div class="scroll-container">
+            <div id="hourly-forecast" class="hourly-list">
+                </div>
+        </div>
+
+        <h2>向こう2週間の天気</h2>
+        <div id="daily-forecast" class="daily-list card">
+            </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+/* =========================================
+   ベース設定
+   ========================================= */
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f0f4f8;
+    color: #333;
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+h1, h2 { text-align: center; color: #2c3e50; }
+h2 { font-size: 1.2rem; margin-top: 30px; margin-bottom: 10px; }
+
+.container { display: flex; flex-direction: column; gap: 15px; }
+
+/* =========================================
+   共通コンポーネント
+   ========================================= */
+/* 白いカードの背景 */
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.loading { text-align: center; color: #888; }
+
+/* ボタン全般のデザイン */
+button {
+    padding: 12px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    /* width: 100%; ここを削除または調整 */
+}
+button:hover { background: #2980b9; }
+
+/* =========================================
+   検索ボックス (今回追加部分)
+   ========================================= */
+.search-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#city-input {
+    flex-grow: 1; /* 横幅いっぱいに広げる */
+    padding: 12px;
+    font-size: 1rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+#city-input:focus {
+    border-color: #3498db; /* 入力時に青く光る */
+}
+
+/* 検索ボックス内のボタン共通設定 */
+#search-btn, #current-loc-btn {
+    width: auto;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+#search-btn {
+    background-color: #2c3e50;
+}
+#search-btn:hover {
+    background-color: #1a252f;
+}
+
+/* ★追加: 現在地ボタン専用デザイン */
+#current-loc-btn {
+    background-color: #e67e22; /* オレンジ色で目立たせる */
+    padding: 0 15px; /* 横幅を少し確保 */
+    font-size: 1.2rem; /* アイコンを少し大きく */
+}
+
+#current-loc-btn:hover {
+    background-color: #d35400;
+}
+
+#get-weather-btn {
+    width: 100%; /* 更新ボタンは横幅いっぱい */
+}
+
+/* =========================================
+   1. 現在の天気エリア
+   ========================================= */
+#current-weather { text-align: center; }
+
+.current-date-time {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.weather-icon { font-size: 3rem; margin: 10px 0; }
+.current-temp { font-size: 3rem; font-weight: bold; color: #2c3e50; }
+
+/* =========================================
+   2. 24時間予報エリア (横スクロール)
+   ========================================= */
+.scroll-container {
+    overflow-x: auto; /* 横スクロールを許可 */
+    padding-bottom: 10px;
+}
+
+.hourly-list {
+    display: flex;
+    gap: 12px;
+    width: max-content; /* 中身に合わせて幅を広げる */
+}
+
+.hourly-item {
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    min-width: 95px; /* カードの幅 */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.hourly-time { 
+    font-size: 0.9rem; 
+    color: #333; 
+    margin-bottom: 5px;
+    line-height: 1.2;
+}
+
+.hourly-date {
+    font-size: 0.75rem;
+    color: #888;
+    display: block;
+}
+
+.hourly-icon { font-size: 1.5rem; margin: 5px 0; }
+.hourly-temp { font-size: 1.1rem; font-weight: bold; color: #e67e22; }
+.hourly-rain { font-size: 0.8rem; color: #3498db; font-weight: bold; margin-top: 5px; }
+
+/* =========================================
+   3. 14日間予報エリア (リスト)
+   ========================================= */
+.daily-row {
+    display: grid;
+    /* グリッド設定: 日付 | アイコン | 降水確率 | 最高/最低気温 */
+    grid-template-columns: 1fr 0.8fr 1fr 1.2fr;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 0.95rem;
+}
+.daily-row:last-child { border-bottom: none; }
+
+.daily-date { font-weight: bold; color: #555; }
+.daily-icon { font-size: 1.4rem; text-align: center; }
+.daily-rain { color: #3498db; font-weight: bold; text-align: center; }
+.daily-temp { text-align: right; }
+.max-temp { color: #e74c3c; font-weight: bold; margin-right: 5px; }
+.min-temp { color: #3498db; }
+
+/* スマホ表示時の微調整 */
+@media (max-width: 480px) {
+    .daily-row { font-size: 0.85rem; }
+    .weather-icon { font-size: 2.5rem; }
+}
