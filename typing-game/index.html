@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="game-header">
+            <div class="score-box">Score: <span id="score">0</span></div>
+            <div class="timer-box">Time: <span id="time">60</span>s</div>
+        </header>
+
+        <main class="game-area">
+            <h1 id="word">Ready...</h1>
+            
+            <input type="text" id="text" placeholder="Type here..." autocomplete="off">
+            
+            <div id="end-game-container" class="hidden">
+                <h2>Time Up!</h2>
+                <p>Your final score is <span id="final-score">0</span></p>
+                <button onclick="location.reload()">Reload</button>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
