@@ -45,3 +45,21 @@ Open-Meteo APIを使用した、世界中の天気を検索できる高機能な
 * **OS:** Windows 11
 * **Editor:** VS Code
 * **Terminal:** Git Bash / PowerShell
+
+---
+
+### 3. Speed Typing Game (タイピングゲーム)
+JavaScriptのイベント処理とDOM操作を学習するために作成した、シンプルなタイピングゲームです。
+Web Audio APIを使用した効果音生成や、ローカルストレージによるハイスコア保存機能も実装しています。
+
+![プレイ画面](images/typing-game-play.png)
+![リザルト画面](images/typing-game-result.png)
+
+* **使用技術:** HTML5, CSS3 (Flexbox), JavaScript (Vanilla)
+* **主な機能:**
+    * **ランダム出題:** 配列からランダムに英単語を出題
+    * **即時判定:** `keydown` イベントにより、Enterキー押下時に正誤判定
+    * **効果音:** `Web Audio API` を使用し、正解・不正解の音をブラウザ内で動的に生成
+    * **スコア管理:**
+        * 制限時間(60秒)のカウントダウン
+        * `LocalStorage` を使用したハイスコアの永続保存（ブラウザを閉じても記録保持）
