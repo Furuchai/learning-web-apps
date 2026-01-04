@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Typing Game</title>
+    <title>Typing Game v2</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,10 +13,14 @@
             <div class="timer-box">Time: <span id="time">60</span>s</div>
         </header>
 
+        <div class="highscore-container">
+            Best: <span id="high-score">0</span> 
+            <span id="high-score-date" style="font-size: 0.8rem; color: #ccc;">(---)</span>
+        </div>
+
         <main class="game-area">
             <h1 id="word">Ready...</h1>
-            
-            <input type="text" id="text" placeholder="Type here..." autocomplete="off">
+            <input type="text" id="text" placeholder="Type & Enter..." autocomplete="off">
             
             <div id="end-game-container" class="hidden">
                 <h2>Time Up!</h2>

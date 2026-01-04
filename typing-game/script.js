@@ -1,80 +1,145 @@
-// --- 1. 準備: HTMLの要素を取得 ---
-// document.getElementById は、HTMLの id を使って要素を特定します
+// --- 1. 準備: 要素の取得 ---
 const word = document.getElementById('word');
 const text = document.getElementById('text');
 const scoreEl = document.getElementById('score');
 const timeEl = document.getElementById('time');
 const endGameEl = document.getElementById('end-game-container');
 const finalScoreEl = document.getElementById('final-score');
+const highScoreEl = document.getElementById('high-score');
+const highScoreDateEl = document.getElementById('high-score-date');
 
-// 出題する単語のリスト（Pythonのリストと同じです）
+// ★単語リストの拡張（難易度別に少し増やしました）
 const words = [
-    'python', 'javascript', 'html', 'css', 'react',
-    'angular', 'window', 'monitor', 'keyboard', 'developer',
-    'code', 'bug', 'debug', 'stack', 'overflow'
+    // Web Basics
+    'html', 'css', 'javascript', 'react', 'node',
+    // Programming Terms
+    'variable', 'function', 'constant', 'array', 'object',
+    'loop', 'condition', 'argument', 'parameter', 'return',
+    // Hardware & Environment
+    'monitor', 'keyboard', 'mouse', 'processor', 'memory',
+    'graphics', 'network', 'server', 'database', 'cloud',
+    'windows', 'linux', 'python', 'terminal', 'command',
+    // Action
+    'compile', 'execute', 'debug', 'deploy', 'version',
+    'commit', 'push', 'pull', 'merge', 'branch'
 ];
 
-// ゲームの状態を管理する変数
 let score = 0;
-let time = 60; // 制限時間（秒）
-let timeInterval; // タイマーのIDを入れる変数（後で止めるために必要）
+let time = 60;
+let timeInterval;
 
-// --- 2. 機能: ゲームの動作を定義 ---
+// --- 2. 初期化: ハイスコアの読み込み ---
+// ローカルストレージからデータを取得。なければ初期値を作成。
+let highScoreData = JSON.parse(localStorage.getItem('typingGameHighScore')) || { score: 0, date: '---' };
 
-// ランダムな単語を選んでDOM（画面）に表示する関数
-function addWordToDOM() {
-    // Math.random() でランダムな数字を作り、リストの長さ掛け算してインデックスを決める
-    const randomWord = words[Math.floor(Math.random() * words.length)];
-    word.innerText = randomWord; // 画面の文字を書き換える
-}
+// 画面にハイスコアを表示
+highScoreEl.innerText = highScoreData.score;
+highScoreDateEl.innerText = `(${highScoreData.date})`;
 
-// スコアを更新する関数
-function updateScore() {
-    score++; // スコアを1増やす
-    scoreEl.innerText = score; // 画面のスコア表示を更新
-}
+// --- 3. 機能: オーディオ（効果音）の生成 ---
+// Web Audio APIを使って、ブラウザ内で音を作ります（外部ファイル不要！）
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-// タイマーを動かす関数（1秒ごとに呼ばれる）
-function updateTime() {
-    time--; // 時間を1減らす
-    timeEl.innerText = time; // 画面の時間表示を更新
+function playSound(type) {
+    const oscillator = audioCtx.createOscillator(); // 音の波を作る装置
+    const gainNode = audioCtx.createGain(); // 音量を調整する装置
 
-    if (time === 0) {
-        clearInterval(timeInterval); // タイマーを止める
-        gameOver(); // ゲーム終了処理へ
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    if (type === 'correct') {
+        // 正解音: 高い音（Sine波）を短く
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(800, audioCtx.currentTime); // 800Hz
+        oscillator.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.1);
+    } else if (type === 'wrong') {
+        // 不正解音: 低い音（Sawtooth波）でブブッ
+        oscillator.type = 'sawtooth';
+        oscillator.frequency.setValueAtTime(150, audioCtx.currentTime); // 150Hz
+        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.2);
     }
 }
 
-// ゲームオーバー時の処理
-function gameOver() {
-    // 終了画面を表示（CSSの 'hidden' クラスを外すことで表示させる）
-    endGameEl.classList.remove('hidden');
-    
-    // 最終スコアを表示
-    finalScoreEl.innerText = score;
+// --- 4. ゲームロジック ---
+
+function addWordToDOM() {
+    const randomWord = words[Math.floor(Math.random() * words.length)];
+    word.innerText = randomWord;
 }
 
-// --- 3. 監視: イベントリスナー ---
+function updateScore() {
+    score++;
+    scoreEl.innerText = score;
+}
 
-// 入力欄に文字が打たれるたびに実行される処理
-text.addEventListener('input', (e) => {
-    const insertedText = e.target.value; // ユーザーが打った文字
+function updateTime() {
+    time--;
+    timeEl.innerText = time;
 
-    // 画面の単語と、打った文字が完全に一致したら...
-    if (insertedText === word.innerText) {
-        addWordToDOM();  // 次の単語を表示
-        updateScore();   // スコアを加算
-        e.target.value = ''; // 入力欄を空っぽにする
+    if (time === 0) {
+        clearInterval(timeInterval);
+        gameOver();
+    }
+}
+
+function gameOver() {
+    endGameEl.classList.remove('hidden');
+    finalScoreEl.innerText = score;
+
+    // ★ハイスコア更新判定
+    if (score > highScoreData.score) {
+        const today = new Date().toLocaleDateString('ja-JP'); // 今日の日付
+        highScoreData = { score: score, date: today };
+        
+        // ローカルストレージに保存（文字列にして保存する必要がある）
+        localStorage.setItem('typingGameHighScore', JSON.stringify(highScoreData));
+        
+        // 画面更新
+        highScoreEl.innerText = highScoreData.score;
+        highScoreDateEl.innerText = `(${highScoreData.date})`;
+        
+        alert(`New High Score! 🎉\nScore: ${score}`);
+    }
+}
+
+// --- 5. イベントリスナー（変更点） ---
+
+// ★変更: 'input'ではなく'keydown'を使う
+text.addEventListener('keydown', (e) => {
+    // Enterキーが押された時だけ判定する
+    if (e.key === 'Enter') {
+        const insertedText = e.target.value;
+
+        if (insertedText === word.innerText) {
+            // 正解
+            playSound('correct'); // ピロン♪
+            addWordToDOM();
+            updateScore();
+            e.target.value = '';
+        } else {
+            // 不正解（オプション：間違えたら入力欄をクリアせず、音だけ鳴らす）
+            playSound('wrong'); // ブブー
+            // e.target.value = ''; // 難易度を上げたい場合は、ここを有効にして入力を消す
+        }
     }
 });
 
-// --- ゲーム開始 ---
-// 最初に1回、単語を表示する
+// ゲーム開始
 addWordToDOM();
-
-// 1000ミリ秒（1秒）ごとに updateTime 関数を実行するタイマーをセット
-// Pythonでいう schedule や time.sleep ループのようなものです
 timeInterval = setInterval(updateTime, 1000);
-
-// 入力欄に最初からカーソルを当てておく（ユーザーがクリックしなくて済むように）
 text.focus();
+
+// ブラウザの仕様上、ユーザーが何か操作しないと音が出ない場合があるため、
+// 最初の入力フォーカス時にAudioContextを再開するおまじない
+text.addEventListener('focus', () => {
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+});
